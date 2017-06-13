@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="UTF-8">
+		<title>RPS-Multiplayer - Jhongert Fuertes</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	</head>
+	<body>
+		<header class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<img class="img-responsive" src="assets/images/train.png">
+					<h1>Train Scheduler</h1>
+				</div>
+			</div>
+		</header>
+		<main class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">Current Train Schedule</div>
+						<div class="panel-body">
+							<table class="table table-hover">
+								<thead>
+									<th>Train Name</th>
+									<th>Destination</th>
+									<th>Frequency</th>
+									<th>Next Arrival</th>
+									<th>Minutes Away</th>
+								</thead>
+
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">Add Train</div>
+						<div class="panel-body">
+							<form>
+								<div class="form-group">
+									<label for="trainName">Train Name</label>
+									<input class="form-control" type="text" name="trainName">
+								</div>
+								<div class="form-group">
+									<label for="destination">Destination</label>
+									<input class="form-control" type="text" name="destination">
+								</div>
+								<div class="form-group">
+									<label for="firstTime">First Train Time (HH:mm -military time)</label>
+									<input class="form-control" type="text" name="firstTime">
+								</div>
+								<div class="form-group">
+									<label for="frequency">Frequency</label>
+									<input class="form-control" type="text" name="frequency">
+								</div>
+								<button type="submit" class="btn btn-default">Submit</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<script type='text/javascript' src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+		<script type="text/javascript" src="assets/js/app.js"></script>
+	</body>
+</html>
