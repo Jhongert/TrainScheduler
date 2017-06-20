@@ -15,7 +15,7 @@ $(document).ready(function(){
         firebase.auth().signInWithPopup(provider).then(function(result) {
             $("main").show();
             $("#login").hide();
-            $("#sign-out").show();
+            $("#sign-out").css("display", "inline-block");
             // This gives you a Google Access Token. You can use it to access the Google API.
             //var token = result.credential.accessToken;
             // The signed-in user info.
@@ -35,6 +35,9 @@ $(document).ready(function(){
 
     $("#sign-out").click(function(){
         firebase.auth().signOut().then(function() {
+            $("main").hide();
+            $("#login").show();
+            $("#sign-out").hide();
           // Sign-out successful.
         }).catch(function(error) {
           // An error happened.
