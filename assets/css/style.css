@@ -33,4 +33,5 @@ header h1 {
 #sign-out {
 	display: none;
 	float: right;
+	margin-top: 10px;
 }
