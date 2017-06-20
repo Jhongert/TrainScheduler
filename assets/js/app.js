@@ -50,9 +50,17 @@ $(document).ready(function(){
   		return valid;
   	}
 
+    function clearForm(){
+        trainName.val("");
+        destination.val("");
+        firstTime.val("");
+        frequency.val("");
+        $("#submit").css("display", "inline-block");
+        $("#update").css("display", "none").attr("data-trainId", "");
+    }
 
   	// submit button click
-  	$(":submit").click(function(event){
+  	$("#submit").click(function(event){
   		event.preventDefault();
   		
   		if(validate()){
@@ -62,14 +70,27 @@ $(document).ready(function(){
                 firstTime: moment(firstTime.val().trim(),"HH:mm").format("X"),
                 frequency: frequency.val().trim()
             });
-
-            trainName.val("");
-            destination.val("");
-            firstTime.val("");
-            frequency.val("");
+            clearForm();
   		}
   	});
 
+    // Update button click
+    $("#update").click(function(){ 
+        if(validate()){
+            var trainId = $(this).attr("data-trainId");
+
+            dataBaseRef.ref(trainId).update({
+                trainName: trainName.val().trim(),
+                destination: destination.val().trim(),
+                firstTime: moment(firstTime.val().trim(),"HH:mm").format("X"),
+                frequency: frequency.val().trim()
+            });
+            
+            clearForm();
+        }
+    });
+
+    // Data base child added event
     dataBaseRef.ref().on('child_added', function(snapshot){
         var currTrain = snapshot.val();
         var nextArrival = '', minAway = '';
@@ -79,7 +100,6 @@ $(document).ready(function(){
     
         //difference between current time and first Time Arrival
         var diff = moment().diff(moment(firstTime, 'HH:mm'), 'minutes');
-         console.log(diff);
         //if difference between current time and first Time Arrival is >= 0
         if(diff >= 0) {
             var frequency = parseInt(currTrain.frequency);
@@ -98,24 +118,72 @@ $(document).ready(function(){
         tr.append("<td>" + nextArrival + "</td>");
         tr.append("<td>" + minAway + "</td>");
         tr.append('<td><button class="btn-danger btn delete" data-trainId="' + snapshot.key +
-            '"data-toggle="modal"><i class="glyphicon glyphicon-remove"></i></button></td>');
+            '"data-toggle="modal"><i class="glyphicon glyphicon-remove"></i></button>' +
+            '<button class="btn-info btn edit" data-trainId="' + snapshot.key +
+            '"><i class="glyphicon glyphicon-pencil"></i></button></td>');
         $("tbody").append(tr);
     });
 
+    // Data base child change event
+    dataBaseRef.ref().on('child_changed', function(snapshot){
+        var currTrain = snapshot.val();
+        var nextArrival = '', minAway = '';
+
+        //create a moment object with the firstTime value in sec
+        var firstTime = moment.unix(currTrain.firstTime);
+    
+        //difference between current time and first Time Arrival
+        var diff = moment().diff(moment(firstTime, 'HH:mm'), 'minutes');
+        //if difference between current time and first Time Arrival is >= 0
+        if(diff >= 0) {
+            var frequency = parseInt(currTrain.frequency);
+            minAway = frequency - diff % frequency;
+            nextArrival = moment().add(minAway, 'minutes').format('hh:mm A');
+            var minAway = frequency - diff % frequency;
+        } else {
+            nextArrival = firstTime.format('hh:mm A');
+            minAway = Math.abs(diff - 1);
+        }
+        var tr = $("#" + snapshot.key);
+        $(tr).children().eq(0).text(currTrain.trainName);
+        $(tr).children().eq(1).text(currTrain.destination);
+        $(tr).children().eq(2).text(currTrain.frequency);
+        $(tr).children().eq(3).text(nextArrival);
+        $(tr).children().eq(4).text(minAway);
+    });
+
+    // Data base child removed
     dataBaseRef.ref().on('child_removed', snap => {
         var key = snap.key;
         $("#" + key).remove();
-    })
+    });
 
     // Delete button class
     $(document).on("click", ".delete", function(){
         var trainId = $(this).attr("data-trainId");
         $("#deleteTrain").attr("data-trainId", trainId);
         $("#confirm-delete").modal();
-    })
+    });
+
+    // Edit button class
+    $(document).on("click", ".edit", function(){
+        var trainId = $(this).attr('data-trainId');
+
+        dataBaseRef.ref(trainId).once('value').then(function(childSnapshot) {
+            trainName.val(childSnapshot.val().trainName);
+            destination.val(childSnapshot.val().destination);
+            firstTime.val(moment.unix(childSnapshot.val().firstTime).format('HH:mm'));
+            frequency.val(childSnapshot.val().frequency);
+        });
+
+        $("#submit").css("display", "none");
+        $("#update").css("display", "inline-block").attr("data-trainId", trainId);
+
+    });
 
     $("#deleteTrain").on("click", function(){
         var trainId = $(this).attr("data-trainId");
         dataBaseRef.ref(trainId).remove();
-    })
+        clearForm();
+    });
 });

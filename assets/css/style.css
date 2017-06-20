@@ -17,3 +17,11 @@ header h1 {
 #notifications {
 	margin-bottom: 10px;
 }
+
+#update {
+	display: none;
+}
+
+.delete{
+	margin-right: 4px;
+}
