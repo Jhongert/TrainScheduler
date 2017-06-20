@@ -29,3 +29,8 @@ header h1 {
 .delete{
 	margin-right: 4px;
 }
+
+#sign-out {
+	display: none;
+	float: right;
+}
